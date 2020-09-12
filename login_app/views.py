@@ -4,8 +4,8 @@ from django.contrib import messages
 import bcrypt
 
 # Login and Register
-def render_welcome(request):
-    return render(request,'welcome.html')
+def to_login(request):
+    return redirect('/login')
 
 # Login
 def render_login(request):

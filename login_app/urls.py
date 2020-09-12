@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     # Render Home, Login and Register Pages
-    path('', views.render_welcome),
+    path('', views.to_login),
     path('login', views.render_login),
     path('register', views.render_register),
     # # Process Login and Register
