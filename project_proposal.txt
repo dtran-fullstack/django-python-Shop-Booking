@@ -1,0 +1,17 @@
+Project: MyShop
+
+The application has booking system and calculating system for employee
+1. Customer can create new appointments:
+    a. New appointment will be in pending state.
+    a. Can't have more than 2 pending appointments.
+    b. Can't have more than 1 pending appointments per one employee.
+
+2. Dashboard:
+    a. List of all employees with 2 options view their pay and view their appointments
+    b. My pay will allow employee to input their services and automatically calculate paid amount and tips
+        i. Show total and tips of 2 weeks
+        ii. Show total and tip in one day - This is helpful for daily turn assignment
+        iii. Total Tips
+        iv. List of services in one day + $
+    c. Current appointments and Upcoming Appointment and Pending Appointment(has accept and decline function)
+   

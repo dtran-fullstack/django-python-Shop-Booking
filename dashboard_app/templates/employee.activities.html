@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Pay</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    {% load static%}
+    <link rel="stylesheet" href="{% static 'format.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="header">
+        <h4>Dashboard</h4>
+        <a href="/dashboard" class="home">Home</a>
+        <a href="/dashboard/logout" class="logout">logout</a>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <form action="/dashboard/{{employee.id}}/activities/today" method="POST" class="container">
+                    {% csrf_token %}
+                    <div class="row">
+                        {% for message in messages %}
+                        <p>{{message}}</p>
+                        {% endfor %}
+                        <div class="col-sm-7" style="border: 2px black solid; padding: 10px;">
+                            {% for service in services %}
+                            <div class="form-check" style="padding: 3px 0px 3px 0px;" id="service-control{{service.id}}">
+                                <input type="number" name="quality" min=0 id="quality{{service.id}}"
+                                    onchange="accumulateSumWithQuality({{service.id}});" style="max-width: 40px;">
+                                <input type="hidden" name="price" id="price{{service.id}}" value="{{service.price}}">
+                                <!-- <input type="hidden" name="service" id="service{{service.id}}" value="{{service.name}}"> -->
+                                <label for="fullset" class="form-check-label" style="min-width: 300px;">
+                                    {{service.name}} - ${{service.price}}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="amount">Amount:</label>
+                                <input type="text" name="amount" class="form-control" id="amount">
+                            </div>
+                            <div class="form-group">
+                                <label for="tip">Tip:</label>
+                                <input type="text" name="tip" class="form-control" value="0">
+                            </div>
+                            <button class="btn btn-primary">Add</button>
+                            <div id="oneday" style="margin-top:20px ;">
+                                <h5 id="today"></5>
+                                <h6>Total: {{total_today}}</h6>
+                                <h6>Tip: {{tip_today}}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-4" id="period">
+                <form action="/dashboard/{{employee.id}}/activities/period" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="start">Start Period </label>
+                        <input type="date" name="start" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="end">End Period </label>
+                        <input type="date" name="end" class="form-control">
+                    </div>
+                    <button class="btn btn-primary">Submit</button>
+                </form>
+                <h5></h5>
+                <h5 style="margin-top:20px;">Total: {{total_today}}</h5>
+                <h6>Tip: {{tip_today}}</h6>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    var oneServicePrice = [0]
+
+    function accumulateSumWithQuality(id) {
+        var sum = 0
+        var price = document.getElementById("price" + id).value
+        var quality = document.getElementById("quality" + id).value
+        oneServicePrice[id] = Number(price) * Number(quality)
+        for (var i = 1; i <= oneServicePrice.length; i++) {
+            if (oneServicePrice[i] != null) {
+                sum += oneServicePrice[i]
+                // console.log("not null")
+            }
+        }
+        document.getElementById("amount").value = sum
+        if (quality != 0) {
+            document.getElementById("service-control" + id).append()
+        }
+    };
+
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    today = mm + '/' + dd + '/' + yyyy;
+    document.getElementById("today").innerHTML=today
+    
+
+</script>
+
+</html>
+
+<!-- function accumulateSum(checkbox, id) {
+    var sum = 0
+    var price = document.getElementById("price" + id).value
+    var quality = document.getElementById("quality" + id).value
+    if (checkbox.checked == true) {
+        if (document.getElementById("quality" + id).value == 0) {
+            oneServicePrice[id] = Number(price)
+        }
+        else {
+            oneServicePrice[id] = Number(price) * Number(quality)
+        }
+        
+        // console.log("Checked")
+    }
+    else {
+        oneServicePrice[id] = 0
+        // console.log("Unchecked")
+    }
+    for (var i = 1; i <= oneServicePrice.length; i++) {
+        if (oneServicePrice[i] != null) {
+            sum += oneServicePrice[i]
+            // console.log("not null")
+        }
+    }
+    document.getElementById("amount").value = sum
+}; -->

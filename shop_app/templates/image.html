@@ -1,0 +1,15 @@
+{% for post in posts %}
+<div class="gallery">
+    <!-- <a href="../../media/{{post.image}}"> -->
+        <img src="../../media/{{post.image}}" alt="post{{post.id}}" id = "img{{post.id}{"
+        onclick="openImage({{post.id}})">
+        <input type="hidden" id="image{{post.id}}" value="{{post.image}}">
+    <!-- </a> -->
+</div>
+{% endfor %}
+<script>
+    function openImage(id){
+        var image = document.getElementById('image'+id).value
+        window.open('http://localhost:8000/media/'+image)
+    };
+</script>

@@ -1,0 +1,19 @@
+.header{
+    border-bottom: blue 2px solid;
+    margin-bottom: 30px;
+}
+.header h3{
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5%;
+    margin-right: 75%;
+}
+.header a{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.wrapper{
+    margin-left: 5%;
+    width: 90%;
+}

@@ -1,0 +1,21 @@
+.gallery{
+    margin: 5px;
+    height: 120px;
+}
+
+img {
+    margin: 5px;
+    border: 1px solid #ccc;
+    height: 120px;
+}
+  
+img:hover {
+    border: 1px solid #777;
+}
+
+#display{
+    height: 500px;
+    overflow-y: scroll;
+    border: 2px black solid;
+}
+

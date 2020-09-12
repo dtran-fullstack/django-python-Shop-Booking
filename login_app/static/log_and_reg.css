@@ -1,0 +1,13 @@
+.wrapper{
+    width: 25%;
+    margin: 0px auto;
+}
+.header h3{
+    margin-right: 50%;
+}
+.header a{
+    margin-left: 10%;
+}
+.btn{
+    float: right;    
+}

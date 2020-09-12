@@ -1,0 +1,18 @@
+.topic *{
+    display: inline-block;
+    vertical-align: bottom;
+}
+.topic a{
+    float: right;
+}
+table{
+    min-width: 100%;
+}
+td,th{
+    border: 2px black solid;
+    text-align: center;
+    padding: 5px;
+}
+
+
+

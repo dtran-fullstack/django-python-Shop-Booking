@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Register</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'default_layout.css' %}">
+    <link rel="stylesheet" href="{% static 'log_and_reg.css' %}">
+</head>
+
+<body>
+    <div class="header">
+        <h3>My Shop</h3>
+        <a href="/">Home</a>
+        <a href="/login">Sign in</a>
+    </div>
+    <div class="wrapper">
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+        <div id="register">
+            <h3>Registration</h3>
+            <form action="/process_register" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="fname">First Name</label>
+                    <input type="text" name="fname" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="lname">Last Name</label>
+                    <input type="text" name="lname" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" name="phone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" name="email" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="text" name="password" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="text" name="confirm_password" class="form-control">
+                </div>
+                <button class="btn btn-primary">Register</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
