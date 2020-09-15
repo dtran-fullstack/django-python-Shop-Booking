@@ -6,11 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile</title>
     <script type="text/javascript" src='http://code.jquery.com/jquery-1.10.2.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     {% load static%}
     <link rel="stylesheet" href="{% static 'format.css' %}">
     <link rel="stylesheet" href="{% static 'gallery.css' %}">
+    <link rel="stylesheet" href="{% static 'employee_profile.css' %}">
 </head>
 
 <body>
@@ -22,13 +25,13 @@
     </div>
     {% else %}
     <div class="header">
-        <h4>My Profile</h4>
+        <h4>My Profile {{request.session.uid}}</h4>
         <a href="/dashboard/logout" class="logout">logout</a>
     </div>
     {% endif %}
     <div class="container">
         <div class="row">
-            <div class="col-sm container" style="padding-right: 100px;">
+            <div class="col-sm container" style="padding-right: 50px;">
                 <form action="/dashboard/{{employee.id}}/profile/upload" method="POST" enctype="multipart/form-data"
                     class="row" style="margin-bottom: 50px;">
                     {% csrf_token %}
@@ -42,10 +45,11 @@
                 <div class="row" id="display">
                     {% for post in employee.posts.all %}
                     <div class="gallery col-sm-2">
-                        <a href="../../media/{{post.image}}">
-                            <img src="../../media/{{post.image}}" alt="post{{post.id}}">
+                        <a href="/media/{{post.image}}">
+                            <img src="/media/{{post.image}}" alt="post{{post.id}}">
                         </a>
-                        <a href="/dashboard/{{employee.id}}/{{post.id}}/remove" class="removePost" style="display: none;">Remove</a>
+                        <a href="/dashboard/{{employee.id}}/{{post.id}}/remove" class="removePost"
+                            style="display: none;">Remove</a>
                     </div>
                     {% endfor %}
                 </div>
@@ -54,10 +58,35 @@
                     <button class="btn btn-primary" id="delPost" style="margin-left: 5px;">Delete post</button>
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm">
+                <!-- GET PAY IN PERIOD -->
+                {% for message in messages %}
+                <p style="text-align: center; color: red;">{{message}}</p>
+                {% endfor %}
+                {% if request.session.uid != 1 %}
+                <div id="period">
+                    <!-- GET PAY IN PERIOD -->
+                    <form action="/dashboard/{{employee.id}}/period" method="GET" id="getPeriod">
+                        {% csrf_token %}
+                        <input type="hidden" name="eid" id="eid" value="{{employee.id}}">
+                        <div class="form-group">
+                            <label for="start">Start Period </label>
+                            <input type="date" name="start" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="end">End Period </label>
+                            <input type="date" name="end" class="form-control">
+                        </div>
+                        <button class="btn btn-primary" >Submit</button>
+                    </form>
+                    <div id="result">
+
+                    </div>
+                </div>
+                {% endif %}
                 <!-- Upcoming Events / Approved -->
-                <fieldset class="form-group">
-                    <legend style="background-color: burlywood;">Upcoming Events:</legend>
+                <d class="form-group events">
+                    <h4>Upcoming Events:</h4>
                     {% for event in employee.has_events.all reversed %}
                     {% if event.status == 1 %}
                     <p>
@@ -69,10 +98,10 @@
                     </p>
                     {% endif %}
                     {% endfor %}
-                </fieldset>
+                </d>
                 <!-- Pending for confirmation Events / Pending -->
-                <fieldset class="form-group">
-                    <legend style="background-color: burlywood;">Pending Events:</legend>
+                <div class="form-group events">
+                    <h4>Pending Events:</h4>
                     {% for event in employee.has_events.all reversed %}
                     {% if event.status == 3 %}
                     <p>
@@ -86,35 +115,47 @@
                     </p>
                     {% endif %}
                     {% endfor %}
-                </fieldset>
-                <!-- Delined Events -->
-                <fieldset class="form-group">
-                    <legend style="background-color: burlywood;">Completed Events:</legend>
-                    {% for event in employee.has_events.all reversed %}
-                    {% if event.status == 2 %}
-                    <p>
-                        {% for customer in event.customers.all %}
-                        {{customer.first_name}}
+                    </d>
+                    <!-- Delined Events -->
+                    <d class="form-group events">
+                        <h4>Completed Events:</h4>
+                        {% for event in employee.has_events.all reversed %}
+                        {% if event.status == 2 %}
+                        <p>
+                            {% for customer in event.customers.all %}
+                            {{customer.first_name}}
+                            {% endfor %}
+                            - {{event.date}}
+                            @ {{event.time}}
+                        </p>
+                        {% endif %}
                         {% endfor %}
-                        - {{event.date}}
-                        @ {{event.time}}
-                    </p>
-                    {% endif %}
-                    {% endfor %}
-                </fieldset>
+                    </d>
+                </div>
             </div>
         </div>
     </div>
-    </div>
 </body>
 <script>
-    $(document).ready(function(){
-        $('#done').click(function(){
-            $('.removePost').hide();
-        });
-        $('#delPost').click(function(){
-            $('.removePost').show();
+    $('#done').click(function () {
+        $('.removePost').hide();
+    });
+    $('#delPost').click(function () {
+        $('.removePost').show();
+    });
+    $('#getPeriod').submit(function (e) {
+        var id = document.getElementById('eid').value
+        e.preventDefault()
+        // console.log($(this).serialize())
+        $.ajax({
+            url: '/dashboard/' + id + '/period',
+            method: 'get',
+            data: $(this).serialize(),
+            success: function (serverResponse) {
+                $('#result').html(serverResponse)
+            }
         });
     });
 </script>
+
 </html>

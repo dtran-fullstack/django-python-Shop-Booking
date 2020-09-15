@@ -57,7 +57,7 @@ def register_event(request):
                 if customer_events[0].employees.first().id == employee.id:
                     messages.error(request,f"Unable to book a new appointment! You already have one appointment with {employee.first_name}")
                     return redirect('/customer')
-            # Check overlap time
+            # Check OVERLAP EVENTS
             # Convert time to sec 
             x = time.strptime(request.POST['time']+":00",'%H:%M:%S')
             request_time = datetime.timedelta(hours=x.tm_hour,minutes=x.tm_min,seconds=x.tm_sec).total_seconds()
@@ -66,7 +66,7 @@ def register_event(request):
                 check_time = datetime.timedelta(hours=x.tm_hour,minutes=x.tm_min,seconds=x.tm_sec).total_seconds()
                 print(f"Request: {request_time} - Booked_Event: {check_time}")
                 if check_time + 3600 >= request_time or request_time + 3600 >= check_time:
-                    messages.error(request, "Overlap Appointment")
+                    messages.error(request, "Overlap Appointments")
                 return redirect('/customer')
 
             # Create the appoinment

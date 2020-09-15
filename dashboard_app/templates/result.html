@@ -1,0 +1,10 @@
+
+{% for message in messages %}
+<p style="text-align: center; color: red;">{{message}}</p>
+{% endfor %}
+<p>Period between 
+    <span>{{request.session.startPeriod}}</span> and 
+    <span>{{request.session.endPeriod}}</span>
+</p>
+<p>Total: {{request.session.totalPeriod}}</p>
+<p>Tip: {{request.session.tipPeriod}}</p>

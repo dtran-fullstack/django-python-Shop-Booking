@@ -13,6 +13,10 @@ td,th{
     text-align: center;
     padding: 5px;
 }
+.wrapper{
+    width: 70%;
+    margin: 0px auto;
+}
 
 
 

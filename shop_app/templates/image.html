@@ -1,7 +1,7 @@
 {% for post in posts %}
 <div class="gallery">
     <!-- <a href="../../media/{{post.image}}"> -->
-        <img src="../../media/{{post.image}}" alt="post{{post.id}}" id = "img{{post.id}{"
+        <img src="/media/{{post.image}}" alt="post{{post.id}}" id = "img{{post.id}{"
         onclick="openImage({{post.id}})">
         <input type="hidden" id="image{{post.id}}" value="{{post.image}}">
     <!-- </a> -->

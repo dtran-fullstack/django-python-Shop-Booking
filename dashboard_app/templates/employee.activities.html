@@ -9,7 +9,10 @@
         integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     {% load static%}
     <link rel="stylesheet" href="{% static 'format.css' %}">
+    <link rel="stylesheet" href="{% static 'employee_activities.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src='http://code.jquery.com/jquery-1.10.2.min.js'></script>
+
 </head>
 
 <body>
@@ -18,18 +21,19 @@
         <a href="/dashboard" class="home">Home</a>
         <a href="/dashboard/logout" class="logout">logout</a>
     </div>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-8">
-                <form action="/dashboard/{{employee.id}}/activities/today" method="POST" class="container">
+            <div class="col-7">
+                <form action="/dashboard/{{employee.id}}/activities/process" method="POST" class="container">
                     {% csrf_token %}
                     <div class="row">
                         {% for message in messages %}
-                        <p>{{message}}</p>
+                        <p style="text-align: center; color: red;">{{message}}</p>
                         {% endfor %}
-                        <div class="col-sm-7" style="border: 2px black solid; padding: 10px;">
+                        <div class="col-sm-7" id="services">
                             {% for service in services %}
-                            <div class="form-check" style="padding: 3px 0px 3px 0px;" id="service-control{{service.id}}">
+                            <div class="form-check" style="padding: 3px 0px 3px 0px;"
+                                id="service-control{{service.id}}">
                                 <input type="number" name="quality" min=0 id="quality{{service.id}}"
                                     onchange="accumulateSumWithQuality({{service.id}});" style="max-width: 40px;">
                                 <input type="hidden" name="price" id="price{{service.id}}" value="{{service.price}}">
@@ -40,8 +44,8 @@
                             </div>
                             {% endfor %}
                         </div>
-                        <div class="col-sm-1"></div>
-                        <div class="col-sm-4">
+                        <!-- <div class="col-sm-1"></div> -->
+                        <div class="col-sm-5">
                             <div class="form-group">
                                 <label for="amount">Amount:</label>
                                 <input type="text" name="amount" class="form-control" id="amount">
@@ -52,17 +56,20 @@
                             </div>
                             <button class="btn btn-primary">Add</button>
                             <div id="oneday" style="margin-top:20px ;">
-                                <h5 id="today"></5>
-                                <h6>Total: {{total_today}}</h6>
-                                <h6>Tip: {{tip_today}}</h6>
+                                <h5 id="today">
+                                    </5>
+                                    <h6>Total: {{total_today}}</h6>
+                                    <h6>Tip: {{tip_today}}</h6>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
-            <div class="col-4" id="period">
-                <form action="/dashboard/{{employee.id}}/activities/period" method="POST">
+            <div class="col-3">
+                <!-- GET PAY IN PERIOD -->
+                <form action="/dashboard/{{employee.id}}/period" method="GET" id="getPeriod">
                     {% csrf_token %}
+                    <input type="hidden" name="eid" id="eid" value="{{employee.id}}">
                     <div class="form-group">
                         <label for="start">Start Period </label>
                         <input type="date" name="start" class="form-control">
@@ -71,11 +78,11 @@
                         <label for="end">End Period </label>
                         <input type="date" name="end" class="form-control">
                     </div>
-                    <button class="btn btn-primary">Submit</button>
+                    <button class="btn btn-primary" >Submit</button>
                 </form>
-                <h5></h5>
-                <h5 style="margin-top:20px;">Total: {{total_today}}</h5>
-                <h6>Tip: {{tip_today}}</h6>
+                <div id="result">
+                    
+                </div>
             </div>
         </div>
     </div>
@@ -106,36 +113,23 @@
     var yyyy = today.getFullYear();
 
     today = mm + '/' + dd + '/' + yyyy;
-    document.getElementById("today").innerHTML=today
-    
+    document.getElementById("today").innerHTML = today
 
+</script>
+<script>
+    $('#getPeriod').submit(function (e){
+        var id = document.getElementById('eid').value
+        e.preventDefault()
+        // console.log($(this).serialize())
+        $.ajax({
+            url: '/dashboard/' + id + '/period',
+            method: 'get',
+            data: $(this).serialize(),
+            success: function (serverResponse) {
+                $('#result').html(serverResponse)
+            }
+        });
+    });
 </script>
 
 </html>
-
-<!-- function accumulateSum(checkbox, id) {
-    var sum = 0
-    var price = document.getElementById("price" + id).value
-    var quality = document.getElementById("quality" + id).value
-    if (checkbox.checked == true) {
-        if (document.getElementById("quality" + id).value == 0) {
-            oneServicePrice[id] = Number(price)
-        }
-        else {
-            oneServicePrice[id] = Number(price) * Number(quality)
-        }
-        
-        // console.log("Checked")
-    }
-    else {
-        oneServicePrice[id] = 0
-        // console.log("Unchecked")
-    }
-    for (var i = 1; i <= oneServicePrice.length; i++) {
-        if (oneServicePrice[i] != null) {
-            sum += oneServicePrice[i]
-            // console.log("not null")
-        }
-    }
-    document.getElementById("amount").value = sum
-}; -->

@@ -53,6 +53,9 @@ def dashboard(request):
         print(event.date)
         event.status = 9 #completed
         event.save()
+    # Reset when go back to dashboard
+    request.session['totalPeriod'] = 0
+    request.session['totalPeriod'] = 0
 
     context = {
         "users" : User.objects.exclude(user_type = 3),
@@ -96,13 +99,13 @@ def render_activities(request,id):
     # Get all today activities and get total earn and tip
     employee = User.objects.get(id=id)
     today_activities = employee.activities.all().filter(created_at__gte=datetime.date.today())
-
-    # print(f'Activities: {today_activities} for {(datetime.datetime.today())}')
+    # Calculate today activities
     total_today = 0
     tip_today = 0
     for activity in today_activities:
         total_today += activity.amount
         tip_today += activity.tip
+    # Initialize total in period
         
     context = {
         "employee" : employee,
@@ -128,29 +131,35 @@ def process_today(request,id):
     return redirect(f'/dashboard/{id}/activities')
 
 def process_period(request,id):
-    if request.method == 'POST':
-        print(request.POST['start'] + "and" + request.POST['end'])
-        employee = User.objects.get(id=id)
-        startdate = request.POST['start']
-        enddate = request.POST['end']
-        activities = employee.activities.all().filter(created_at__gte=startdate,created_at__lte=enddate)
+    if request.method == 'GET':
+        if request.GET['start'] == '':
+            messages.error(request,"Please select start date")
+        elif request.GET['end'] == '':
+            messages.error(request,"Please select end date")
+        else:
+            employee = User.objects.get(id=id)
+            startdate = request.GET['start']
+            enddate = request.GET['end']
+            activities = Activity.objects.filter(employee=employee,created_at__gte=startdate,created_at__lte=enddate)
+            total_period = 0
+            tip_period = 0
+            for activity in activities:
+                total_period += activity.amount
+                tip_period += activity.tip
 
-        total_period = 0
-        tip_period = 0
-        for activity in activities:
-            total_period += activity.amount
-            tip_period += activity.tip
-            print(f'Amount: {activity.amount} on {activity.created_at}')
-        print (f'Total_Period: {total_period}')
-    return redirect(f'/dashboard/{id}/activities')
+            request.session['totalPeriod'] = total_period
+            request.session['tipPeriod'] = tip_period
+            request.session['startPeriod'] = startdate
+            request.session['endPeriod'] = enddate
+    return render(request,'result.html')
 
 # Employee APPOINTMENTS
 def render_employee_events(request,id):
     # employee = User.objects.get(id=id)
     if 'uid' not in request.session:
         return redirect('/')
+    
     context = {
-        # "events" : employee.has_events.all()
         "employee" : User.objects.get(id=id)
     }
     return render(request,'employee_appointments.html',context)

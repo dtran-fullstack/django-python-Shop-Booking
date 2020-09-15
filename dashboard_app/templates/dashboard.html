@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     {% load static %}
-    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'format.css' %}">
 </head>
 
@@ -44,8 +44,10 @@
                         <td>{{user.id}}</td>
                         <td>
                             <p style="font-weight: bold;">{{user.fullname}}</p>
+                            {% if user.id != 1 %}
                             <a href="/dashboard/{{user.id}}/activities">My Activities</a><br>
                             <a href="/dashboard/{{user.id}}/profile">My Appointments</a>
+                            {% endif %}
                         </td>
                         <td>{{user.email}}</td>
                         <td>{{user.phone}}</td>
