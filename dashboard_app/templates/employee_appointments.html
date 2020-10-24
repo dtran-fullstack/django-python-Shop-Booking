@@ -120,7 +120,7 @@
                     <d class="form-group events">
                         <h4>Completed Events:</h4>
                         {% for event in employee.has_events.all reversed %}
-                        {% if event.status == 2 %}
+                        {% if event.status == 2  or event.status == 9%}
                         <p>
                             {% for customer in event.customers.all %}
                             {{customer.first_name}}
